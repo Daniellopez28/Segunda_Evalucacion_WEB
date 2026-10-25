@@ -1,6 +1,6 @@
 /*importamos las herramientas
 el framework que crea el servidor y maneja las rutas
-y el cors , que permite que react que esta en tro puerto 
+y el cors permite que react que esta en otro puerto 
 se conecte */ 
 const express = require('express');
 const cors = require ('cors');
@@ -85,7 +85,10 @@ app.post('/api/reserva/agregar', (req, res) => {
 y nosotros lo extraemos así.*/
 const {alimentoId, cantidad} = req.body;
 
-/*1. Buscamos el plato en el menú con find(encontrar)*/
+/*1. Buscamos el plato en el menú con find(encontrar)
+Busca en el menu un plato (p variable temporal) que cumpla
+con que su ID (p.id) sea igual al id que pidio el usuario
+(alimentoid) y luego guradalo en platomenu*/
 const platoMenu = menuRestaurante.find(p => p.id === alimentoId);
 
 if(!platoMenu){
@@ -141,7 +144,10 @@ for(let i = 0; i < reserva_Actual.length; i++){
 let item = reserva_Actual[i];
 let plato = menuRestaurante.find(p => p.id === item.id);
 
-/*si es el plato que estamos modificando, usamos la nueva cantidad*/
+/*si es el plato que estamos modificando, usamos la nueva cantidad
+el ? y : es como un pequeño if, que pregunta  si el id que estamos revisando (item.id)
+es iugal al id del plato que queremos modificar(idplato), entonces cantidad
+vale nueva cantidad, peri si no es igual vale lo que ya tenia en el carrito*/
 let cantidad = (item.id === idPlato) ? nuevaCantidad : item.cantidad;
 nuevoTotal += (plato.precio * cantidad);
 
@@ -169,6 +175,7 @@ res.status(200).json({mensaje: "Cantidad actualizada", reserva: reserva_Actual})
 
 });
 
+//---------------------------------------------------------------------------
 /*5- Endpoint 5:  Eliminar un plato del carrito y devolver el stock*/
 app.delete('/api/reserva/eliminar/:id', (req, res) => {
    const idPlato = parseInt(req.params.id);

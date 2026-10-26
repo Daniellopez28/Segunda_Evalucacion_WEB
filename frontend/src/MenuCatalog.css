@@ -1,7 +1,35 @@
---Archivo CSS para el componente MenuCatalog.jsx
+/*Archivo para modificar los rstilos de MenuCatalog
+Si se desea realizar una modificacion especifica de 
+los colores se pude hacer dentro del div. Ejemplo:
 
-.cardContainer-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+<div class="maincardContainer" style="background-color: #0cb593;">
+blahblahblah</div> 
+
+Las clases son para tener una plantilla general de estilos y se pueden modificar aqui
+*/
+
+.maincardContainer{
+    /* Contenedor principal para las tarjetas*/
+    background-color: #0cb593; /* Color de prueba */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.cardContainer{
+    /* Contenedor para cada tarjeta individual */
+    background-color: #e61919; /* Color de prueba */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+
+.cardContainer-image{
+    /* Contenedor para la imagen de la tarjeta */
+    width: 20%;
+    background-color: #f5f5f5; /* Color de prueba */
+
 }

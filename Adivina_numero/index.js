@@ -14,15 +14,20 @@ app.post('/guess', (req, res) => {
     
     //Validacion de el numero ingresado, si no cumple dara un 'bad requesto (400)' al igual que el mensaje
     if(!Number.isInteger(intentos) || intentos <1 || intentos >100) {
-        return res.status(400).json({mensaje: "ingresar un numero entre 1 y 100"})
+        return res.status(400).json({mensaje: "ingresar un numero entre 1 y 100"});
     }
 
     if(intento < numeroSecreto){
         //validamos que si el numero que ingresa el usuario es menor al numero a adivinar, entonces devuelve el 200 y el mensaje
-        return res.status(200).json({resultado: "mayor", mensaje: "el numero oculto es mayor al numero ingresado"})
+        return res.status(200).json({resultado: "mayor", mensaje: "el numero a adivinar es mayor al numero ingresado"});
     }
 
-    
+    if(intentos > numeroSecreto){
+        //validamos que si el numero ingresado es mayor al oculto devuelva el 200 y el mensaje
+        return res.status(200).json({resultado: "menor", mensaje: "El numero a adivinar es menor al numero ingresado"});
+    }
+
 });
+
 
 

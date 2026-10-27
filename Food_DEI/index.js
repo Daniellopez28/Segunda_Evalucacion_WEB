@@ -16,7 +16,9 @@ let menuRestaurante = [
     {id: 101, nombre: "Menú ejecutivo (Pollo)", precio: 5.50, stock: 12, categoria: "Fuerte"},
     {id: 102, nombre: "Pasta alfredo", precio: 6.00, stock: 8, categoria: "Fuerte"},
     {id: 103, nombre: "Ensalada César", precio: 3.50, stock: 15, categoria: "Entrada"},
-    {id: 104, nombre: "Jugo natural", precio: 1.50, stock: 2, categoria: "Bebida"}
+    {id: 104, nombre: "Jugo natural", precio: 1.50, stock: 2, categoria: "Bebida"},
+    {id: 105, nombre: "Agua mineral", precio: 1.00, stock: 20, categoria: "Bebida"}
+
 ];
 
 let reserva_Actual = [];
@@ -91,7 +93,6 @@ app.put('/api/reserva/actualizar-porciones/:id', (req, res) => {
 
         let cantidad = (item.id === idPlato) ? nuevaCantidad : item.cantidad;
         
-        // CORREGIDO: Se agregó el operador * de multiplicación
         nuevoTotal += (plato.precio * cantidad);
     }
 
@@ -103,7 +104,6 @@ app.put('/api/reserva/actualizar-porciones/:id', (req, res) => {
         return res.status(400).json({ mensaje: "Stock insuficiente" });
     }
 
-    // CORREGIDO: Se corrigió la operación matemática del stock
     platoMenu.stock = (platoMenu.stock + item_En_Reserva.cantidad) - nuevaCantidad;
     item_En_Reserva.cantidad = nuevaCantidad;
 

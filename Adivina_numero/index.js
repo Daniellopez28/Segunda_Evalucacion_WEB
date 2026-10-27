@@ -16,6 +16,13 @@ app.post('/guess', (req, res) => {
     if(!Number.isInteger(intentos) || intentos <1 || intentos >100) {
         return res.status(400).json({mensaje: "ingresar un numero entre 1 y 100"})
     }
+
+    if(intento < numeroSecreto){
+        //validamos que si el numero que ingresa el usuario es menor al numero a adivinar, entonces devuelve el 200 y el mensaje
+        return res.status(200).json({resultado: "mayor", mensaje: "el numero oculto es mayor al numero ingresado"})
+    }
+
+    
 });
 
 

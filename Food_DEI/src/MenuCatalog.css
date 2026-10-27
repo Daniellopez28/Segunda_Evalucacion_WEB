@@ -105,9 +105,23 @@ letras
 .cardContainer-content{
     /* Contenedor para el contenido de la tarjeta */
     width: 100%;
-    height: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     background-color: #f8f6f9; /* Fondo para el texto */
+}
+
+.cardContainer-content > label {
+    margin-top: auto;
+}
+
+.cardContainer-content .inputCantidad {
+    margin-top: 8px;
+}
+
+.cardContainer-content .botonReserva {
+    margin-top: 12px !important;
 }
 
 .cardContainer-name{
@@ -129,4 +143,21 @@ letras
     font-size: 16px;
     width: 100%;
 
+}
+
+
+.botonReserva {
+    background-color: #BF416F;
+    border-color: #BF416F;
+}
+
+.botonReserva:not(:disabled):hover {
+    background-color: #73022C;
+    border-color: #73022C;
+}
+
+.botonReserva.agotado,
+.botonReserva.agotado:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
 }

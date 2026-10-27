@@ -136,12 +136,17 @@ function MenuCatalog() {
                             <div className="cardContainer-content">
                                 <h2 className="cardContainer-name">{plato.nombre}</h2>
                                 <p className="mb-2">Categoria: {plato.categoria}</p>
-                                <p className="cardContainer-price">Precio: ${plato.precio.toFixed(2)}</p>
-                                <p className="my-2">Stock disponible: <strong>{plato.stock}</strong></p>
+                                <p className="my-2">
+                                    Stock disponible: <strong>{plato.stock}</strong>
+                                </p>
                                 <Label for={`cantidad-${plato.id}`}>Porciones de {plato.nombre}</Label>
+
+                                <p className="cardContainer-price">Precio: ${plato.precio.toFixed(2)}</p>
+
                                 <Input
                                     id={`cantidad-${plato.id}`}
                                     type="number"
+                                    className="inputCantidad"
                                     min="1"
                                     step="1"
                                     value={cantidades[plato.id] ?? 1}
@@ -151,8 +156,7 @@ function MenuCatalog() {
                                     }))}
                                 />
                                 <Button
-                                    className="mt-3 w-100"
-                                    color={plato.stock === 0 ? 'secondary' : 'success'}
+                                    className={`mt-3 w-100 botonReserva ${plato.stock === 0 ? 'agotado' : ''}`}
                                     disabled={plato.stock === 0 || enviandoId !== null}
                                     onClick={() => agregarReserva(plato)}
                                 >

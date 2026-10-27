@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, Badge, Button, Input, Label } from 'reactstrap';
+import BandejaReserva from './BandejaReserva.jsx';
 import '../src/MenuCatalog.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -59,12 +60,23 @@ function MenuCatalog() {
             return;
         }
 
-        setEnviandoId(plato.id);
+        const guardado = await enviarCambio(plato.id, '/reserva/agregar', 'POST', {
+            alimentoId: plato.id, cantidad,
+        });
+        if (guardado) {
+            setCantidades(anteriores => ({ ...anteriores, [plato.id]: 1 }));
+        }
+    }
+
+    async function enviarCambio(id, ruta, metodo, body) {
+        setError('');
+        setMensaje('');
+        setEnviandoId(id);
         try {
-            const respuesta = await fetch(`${API}/reserva/agregar`, {
-                method: 'POST',
+            const respuesta = await fetch(`${API}${ruta}`, {
+                method: metodo,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ alimentoId: plato.id, cantidad }),
+                body: body === undefined ? undefined : JSON.stringify(body),
             });
             const datos = await leerRespuesta(respuesta);
             setMensaje(datos.mensaje);
@@ -76,14 +88,24 @@ function MenuCatalog() {
             ]);
             setMenu(platos);
             setReserva(cuenta);
-            setCantidades(anteriores => ({ ...anteriores, [plato.id]: 1 }));
+            return true;
         } catch (error) {
             setError(error instanceof TypeError
                 ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
                 : error.message);
+            return false;
         } finally {
             setEnviandoId(null);
         }
+    }
+
+    function actualizarPorciones(id, nuevaCantidad) {
+        // El backend existente recibe la cantidad final con este nombre.
+        return enviarCambio(id, `/reserva/actualizar-porciones/${id}`, 'PUT', { nuevaCantidad });
+    }
+
+    function quitarPlato(id) {
+        return enviarCambio(id, `/reserva/eliminar/${id}`, 'DELETE');
     }
 
     return (
@@ -98,6 +120,7 @@ function MenuCatalog() {
             )}
             {error && <Alert color="warning" role="alert">{error}</Alert>}
             {mensaje && <Alert color="success" role="status">{mensaje}</Alert>}
+            {enviandoId !== null && <p role="status">Guardando cambios...</p>}
             {cargando && <p role="status">Cargando menu...</p>}
             {!cargando && error && (
                 <Button color="secondary" outline onClick={() => window.location.reload()}>
@@ -106,38 +129,48 @@ function MenuCatalog() {
             )}
             {!cargando && !error && menu.length === 0 && <p>No hay platos disponibles hoy.</p>}
 
-            <div className="maincardContainer">
-                {menu.map(plato => (
-                    <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
-                        <div className="cardContainer-content">
-                            <h2 className="cardContainer-name">{plato.nombre}</h2>
-                            <p className="mb-2">Categoria: {plato.categoria}</p>
-                            <p className="cardContainer-price">Precio: ${plato.precio.toFixed(2)}</p>
-                            <p className="my-2">Stock disponible: <strong>{plato.stock}</strong></p>
-                            <Label for={`cantidad-${plato.id}`}>Porciones de {plato.nombre}</Label>
-                            <Input
-                                id={`cantidad-${plato.id}`}
-                                type="number"
-                                min="1"
-                                step="1"
-                                value={cantidades[plato.id] ?? 1}
-                                disabled={plato.stock === 0 || enviandoId !== null}
-                                onChange={event => setCantidades(anteriores => ({
-                                    ...anteriores, [plato.id]: event.target.value,
-                                }))}
-                            />
-                            <Button
-                                className="mt-3 w-100"
-                                color={plato.stock === 0 ? 'secondary' : 'success'}
-                                disabled={plato.stock === 0 || enviandoId !== null}
-                                onClick={() => agregarReserva(plato)}
-                            >
-                                {plato.stock === 0 ? 'Agotado'
-                                    : enviandoId === plato.id ? 'Agregando...' : 'Anadir a la Reserva'}
-                            </Button>
-                        </div>
-                    </article>
-                ))}
+            <div className="menuReservaLayout">
+                <div className="maincardContainer">
+                    {menu.map(plato => (
+                        <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
+                            <div className="cardContainer-content">
+                                <h2 className="cardContainer-name">{plato.nombre}</h2>
+                                <p className="mb-2">Categoria: {plato.categoria}</p>
+                                <p className="cardContainer-price">Precio: ${plato.precio.toFixed(2)}</p>
+                                <p className="my-2">Stock disponible: <strong>{plato.stock}</strong></p>
+                                <Label for={`cantidad-${plato.id}`}>Porciones de {plato.nombre}</Label>
+                                <Input
+                                    id={`cantidad-${plato.id}`}
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    value={cantidades[plato.id] ?? 1}
+                                    disabled={plato.stock === 0 || enviandoId !== null}
+                                    onChange={event => setCantidades(anteriores => ({
+                                        ...anteriores, [plato.id]: event.target.value,
+                                    }))}
+                                />
+                                <Button
+                                    className="mt-3 w-100"
+                                    color={plato.stock === 0 ? 'secondary' : 'success'}
+                                    disabled={plato.stock === 0 || enviandoId !== null}
+                                    onClick={() => agregarReserva(plato)}
+                                >
+                                    {plato.stock === 0 ? 'Agotado'
+                                        : enviandoId === plato.id ? 'Guardando...' : 'Anadir a la Reserva'}
+                                </Button>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+                <BandejaReserva
+                    reserva={reserva}
+                    menu={menu}
+                    cargando={cargando}
+                    ocupado={enviandoId !== null}
+                    onActualizar={actualizarPorciones}
+                    onQuitar={quitarPlato}
+                />
             </div>
         </section>
     );

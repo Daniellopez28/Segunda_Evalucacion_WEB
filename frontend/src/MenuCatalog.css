@@ -31,6 +31,45 @@ letras
     padding: 10px;
     padding-top: 20px;
     justify-content: center;
+    align-content: start;
+}
+
+.menuReservaLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    gap: 24px;
+    align-items: start;
+}
+
+.bandejaReserva {
+    position: sticky;
+    top: 20px;
+    padding: 20px;
+    border: 1px solid #e5dce2;
+    border-radius: 8px;
+    background: white;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.porcionesReserva {
+    min-width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #6c757d;
+    border-bottom: 1px solid #6c757d;
+}
+
+@media (max-width: 900px) {
+    .menuReservaLayout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .bandejaReserva {
+        position: static;
+        grid-row: 1;
+    }
 }
 
 .cardContainer {

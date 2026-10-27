@@ -10,7 +10,12 @@ let numeroSecreto = generarNumero();
 
 //endpoint 
 app.post('/guess', (req, res) => {
+    const {intentos} = req.body; //ingresa a req.body y busca el apartado de intentos yu lo guarda en una variable con el mismo nombre
     
+    //Validacion de el numero ingresado, si no cumple dara un 'bad requesto (400)' al igual que el mensaje
+    if(!Number.isInteger(intentos) || intentos <1 || intentos >100) {
+        return res.status(400).json({mensaje: "ingresar un numero entre 1 y 100"})
+    }
 });
 
 

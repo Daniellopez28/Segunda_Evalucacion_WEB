@@ -39,5 +39,8 @@ const enviarIntento = async (e) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ intento: Number(numero) })
             });
+
+            //espera la respuesta de el servidor y transfomra esa respuesta de json a objeto de js
+            const datos = await respuesta.json();
         }
 };

@@ -28,3 +28,10 @@ function Juego(){
 //recorre el historial filtrandolo con la condicion, de que != de correcto, y se cuentan con el length
 const fallidos = historial.filter(h => h.resultado != 'correcto').length;
 
+//con el async indicamos a JS que es una funcion de asincronia, donde "e" recibe el submit de el formulario
+const enviarIntento = async (e) => {
+   e.preventDefault(); //este se encarga de retener la recarga de la pagina sola, para que react no pierda su estado
+   setError(''); //limpia los mensajes de error anteriores antes de un nuevo intento
+   
+   
+};

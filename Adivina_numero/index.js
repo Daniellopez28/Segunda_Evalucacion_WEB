@@ -27,6 +27,8 @@ app.post('/guess', (req, res) => {
         return res.status(200).json({resultado: "menor", mensaje: "El numero a adivinar es menor al numero ingresado"});
     }
 
+     //si el resultado no es menor ni mayor es correcto por ello se devuelve lo siguiente
+    res.status(200).json({resultado: "correcto", mensaje: "Felicidades, adivinaste el numero oculto!"});
 });
 
 

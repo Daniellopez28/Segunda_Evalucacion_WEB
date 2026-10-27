@@ -31,5 +31,10 @@ app.post('/guess', (req, res) => {
     res.status(200).json({resultado: "correcto", mensaje: "Felicidades, adivinaste el numero oculto!"});
 });
 
+//creamos el segundo endpoint para el caso en el que quierea vovler a jugar
+app.post('/reset', (req, res) => {
+    numeroSecreto = generarNumero();
+    res.status(200).json({mensaje: "Juego reiniciado, buena suerte!"});
+});
 
 

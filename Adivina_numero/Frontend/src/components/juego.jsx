@@ -18,4 +18,10 @@ function Juego(){
     //mensaje de el servidor para los casos que se van dando 
     const [mensaje, setMensaje] = useState('');
 
+    //deterina si gano o no como un interruptor
+    const [gano, setGano] = setState(false);
+
+    //guarda los errores de validaciones o red que se vayan dando
+    const [error, setError] = setState('');
+
 };

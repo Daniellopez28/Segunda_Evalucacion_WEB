@@ -13,11 +13,11 @@ app.use(cors());
 let saldoUsuario = 25.00;
 
 let menuRestaurante = [
-    {id: 101, nombre: "Menú ejecutivo (Pollo)", precio: 5.50, stock: 12, categoria: "Fuerte"},
-    {id: 102, nombre: "Pasta alfredo", precio: 6.00, stock: 8, categoria: "Fuerte"},
-    {id: 103, nombre: "Ensalada César", precio: 3.50, stock: 15, categoria: "Entrada"},
-    {id: 104, nombre: "Jugo natural", precio: 1.50, stock: 2, categoria: "Bebida"},
-    {id: 105, nombre: "Agua mineral", precio: 1.00, stock: 20, categoria: "Bebida"}
+    {id: 101, nombre: "Menú ejecutivo (Pollo)", descripcion: "Pechuga de pollo en salsa de hongos con vegetales salteados" ,precio: 5.50, stock: 12, categoria: "Fuerte"},
+    {id: 102, nombre: "Pasta alfredo", descripcion: "Deliciosa pasta alfredo con cilantro", precio: 6.00, stock: 8, categoria: "Fuerte"},
+    {id: 103, nombre: "Ensalada César", descripcion: "Lechuga, tomate y pepino acompañado de salsa ranch y trocitos de pollo" ,precio: 3.50, stock: 15, categoria: "Entrada"},
+    {id: 104, nombre: "Jugo natural", descripcion: "Jugo de naranja natural",precio: 1.50, stock: 2, categoria: "Bebida"},
+    {id: 105, nombre: "Agua mineral", descripcion: "Agua carbonatada",precio: 1.00, stock: 20, categoria: "Bebida"}
 
 ];
 

@@ -136,8 +136,8 @@ function MenuCatalog() {
                             <div className="cardContainer-content">
                                 <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
                                 <p className="mb-2" style={{ fontSize: "14px" }}>Categoria: {plato.categoria}</p>
-                                
-                                <Label for={`cantidad-${plato.id}`}>Porciones de {plato.nombre}</Label> {/*MODIFICAR DESCRIPCION DEL PRODUCTO*/}
+
+                                <Label for={`cantidad-${plato.id}`}>{plato.descripcion}</Label>
 
                                 <p className="my-2" style={{fontSize: "14px"}}>
                                     Stock disponible: <strong>{plato.stock}</strong>

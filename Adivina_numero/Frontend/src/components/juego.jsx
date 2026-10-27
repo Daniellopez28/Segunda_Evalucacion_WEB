@@ -23,5 +23,8 @@ function Juego(){
 
     //guarda los errores de validaciones o red que se vayan dando
     const [error, setError] = setState('');
-
 };
+
+//recorre el historial filtrandolo con la condicion, de que != de correcto, y se cuentan con el length
+const fallidos = historial.filter(h => h.resultado != 'correcto').length;
+

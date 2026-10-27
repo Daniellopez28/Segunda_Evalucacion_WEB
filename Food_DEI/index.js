@@ -61,6 +61,15 @@ app.post('/api/reserva/agregar', (req, res) => {
         return res.status(400).json({ mensaje: "Stock insuficiente" });
     }
 
+    const totalActual = reserva_Actual.reduce((total, item) => {
+        const plato = menuRestaurante.find(p => p.id === item.id);
+        return total + (plato.precio * item.cantidad);
+    }, 0);
+
+    if (totalActual + (platoMenu.precio * cantidad) > saldoUsuario) {
+        return res.status(400).json({ mensaje: "Saldo insuficiente para agregar este plato" });
+    }
+
     const item_En_Reserva = reserva_Actual.find(item => item.id === alimentoId);
 
     if (item_En_Reserva) {

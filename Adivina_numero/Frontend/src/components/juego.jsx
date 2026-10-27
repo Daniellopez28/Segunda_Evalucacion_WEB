@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Container, Form, Input, Button, Alert, ListGroup, ListGroupItem, Badge } from 'reactstrap';
 
 //creamos una constante api que almacenara la URL
-const API = 'http://localhost:3000'; 
+const API = 'http://localhost:4000'; 
 
 //creamos un componente de react, la mayuscula en "juego", indica que es una interfaz de usuario que devolvera
 //codigo de manera dinamica

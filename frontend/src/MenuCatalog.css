@@ -1,0 +1,132 @@
+/*Archivo para modificar los rstilos de MenuCatalog
+Si se desea realizar una modificacion especifica de
+los colores se pude hacer dentro del div. Ejemplo:
+
+<div class="maincardContainer" style="background-color: #0cb593;">
+blahblahblah</div>
+
+Las clases son para tener una plantilla general de estilos y se pueden modificar aqui
+
+codigo de colores:
+#f0f0f0 blanco
+#e8e6ea34  fondo blanco contenedor info
+
+fondos
+#73022C rosa oscuro
+#BF416F rosa claro
+#BF84A5 rosa palido
+letras
+#F2F2F2 blanco
+#8C8279 beige
+*/
+
+
+.maincardContainer{
+    /* Contenedor principal para las tarjetas*/
+    display: flex;
+    flex-wrap: wrap; /* basicamente, si no caben lo tira a otra fila */
+     /*display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));*/
+    gap: 20px; /*espacio entre las tarjetas*/
+    padding: 10px;
+    padding-top: 20px;
+    justify-content: center;
+    align-content: start;
+}
+
+.menuReservaLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    gap: 24px;
+    align-items: start;
+}
+
+.bandejaReserva {
+    position: sticky;
+    top: 20px;
+    padding: 20px;
+    border: 1px solid #e5dce2;
+    border-radius: 8px;
+    background: white;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.porcionesReserva {
+    min-width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #6c757d;
+    border-bottom: 1px solid #6c757d;
+}
+
+@media (max-width: 900px) {
+    .menuReservaLayout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .bandejaReserva {
+        position: static;
+        grid-row: 1;
+    }
+}
+
+.cardContainer {
+    background-color: #f8f6f9;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    justify-self: center;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0;
+    box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.15);
+
+}
+
+.cardContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+
+.cardContainer-image{
+    /* Contenedor para la imagen de la tarjeta */
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin distorsionarla */
+    background-color: #f0f0f000; /* Color de prueba */
+}
+
+.cardContainer-content{
+    /* Contenedor para el contenido de la tarjeta */
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    background-color: #f8f6f9; /* Fondo para el texto */
+}
+
+.cardContainer-name{
+    /* Estilo para el nombre del producto */
+    background-color: #f8f6f9; /* Fondo para el texto */
+    font-size: 18px;
+    color: #73022C ;
+    width: 100%;
+    font-weight: bold;
+    text-align: left;
+}
+
+.cardContainer-price{
+    /* Estilo para el nombre del producto */
+    background-color: #f8f6f9; /* Fondo para el texto */
+    text-align: right;
+    color: #BF416F;
+    font-weight: bold;
+    font-size: 16px;
+    width: 100%;
+
+}

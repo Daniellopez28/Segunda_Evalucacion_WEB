@@ -134,14 +134,16 @@ function MenuCatalog() {
                     {menu.map(plato => (
                         <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
                             <div className="cardContainer-content">
-                                <h2 className="cardContainer-name">{plato.nombre}</h2>
-                                <p className="mb-2">Categoria: {plato.categoria}</p>
-                                <p className="my-2">
+                                <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
+                                <p className="mb-2" style={{ fontSize: "14px" }}>Categoria: {plato.categoria}</p>
+
+                                <Label for={`cantidad-${plato.id}`}>{plato.descripcion}</Label>
+
+                                <p className="my-2" style={{fontSize: "14px"}}>
                                     Stock disponible: <strong>{plato.stock}</strong>
                                 </p>
-                                <Label for={`cantidad-${plato.id}`}>Porciones de {plato.nombre}</Label>
 
-                                <p className="cardContainer-price">Precio: ${plato.precio.toFixed(2)}</p>
+                                <p className="cardContainer-price" style={{ textAlign: "left" }}>Precio: ${plato.precio.toFixed(2)}</p>
 
                                 <Input
                                     id={`cantidad-${plato.id}`}

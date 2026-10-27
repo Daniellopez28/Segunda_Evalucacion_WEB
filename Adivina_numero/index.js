@@ -8,3 +8,9 @@ const generarNumero = () => Math.floor(Math.random() * 100) + 1;
 // Número oculto (let porque cambia en cada reinicio)
 let numeroSecreto = generarNumero();
 
+//endpoint 
+app.post('/guess', (req, res) => {
+    
+});
+
+

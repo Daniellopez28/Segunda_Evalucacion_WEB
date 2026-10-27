@@ -11,13 +11,12 @@ codigo de colores:
 #f0f0f0 blanco
 #e8e6ea34  fondo blanco contenedor info
 
-fondos
-#73022C rosa oscuro
-#BF416F rosa claro
-#BF84A5 rosa palido
-letras
-#F2F2F2 blanco
-#8C8279 beige
+/* Paleta de colores aplicada:
+   Verde: #294C29
+   Rojo Ladrillo: #9F280A
+   Naranja Quemado: #B43E17
+   Amarillo Trigo: #E7AF67
+   Beige: #F6E4C9
 */
 
 
@@ -45,7 +44,7 @@ letras
     position: sticky;
     top: 20px;
     padding: 20px;
-    border: 1px solid #e5dce2;
+    border: 1px solid #E7AF67;
     border-radius: 8px;
     background: white;
     text-align: left;
@@ -126,9 +125,9 @@ letras
 
 .cardContainer-name{
     /* Estilo para el nombre del producto */
-    background-color: #f8f6f9; /* Fondo para el texto */
+    background-color: #ffffff; /* Fondo para el texto */
     font-size: 18px;
-    color: #73022C ;
+    color: #294C29 ;
     width: 100%;
     font-weight: bold;
     text-align: left;
@@ -138,7 +137,7 @@ letras
     /* Estilo para el nombre del producto */
     background-color: #f8f6f9; /* Fondo para el texto */
     text-align: right;
-    color: #BF416F;
+    color: #B43E17;
     font-weight: bold;
     font-size: 16px;
     width: 100%;
@@ -147,8 +146,8 @@ letras
 
 
 .botonReserva {
-    background-color: #BF416F;
-    border-color: #BF416F;
+    background-color: #9F280A;
+    border-color: #9F280A;
 }
 
 .botonReserva:not(:disabled):hover {

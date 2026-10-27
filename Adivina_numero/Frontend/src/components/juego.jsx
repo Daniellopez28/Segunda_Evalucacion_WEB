@@ -42,5 +42,13 @@ const enviarIntento = async (e) => {
 
             //espera la respuesta de el servidor y transfomra esa respuesta de json a objeto de js
             const datos = await respuesta.json();
+
+            //revisa si el servidor respondio con algun codigo de error (tipo 400 o 500)
+            if(!respuesta.ok){
+                setError(datos.mensaje); //muestra el error en pantalla
+                return;
+            }
+
+
         }
 };

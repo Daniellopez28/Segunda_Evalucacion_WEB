@@ -49,6 +49,16 @@ const enviarIntento = async (e) => {
                 return;
             }
 
+            //guarda el resultado de el servidor en el estado mensaje para que lo vea el usuario
+            setMensaje(datos.mensaje);
+            //agrega un intento al final de la lista de historial, usa los "..." par amantener el historial viejo
+            setHistorial([...historial, { numero: Number(numero), resultado: datos.resultado }]);
 
-        }
+            //validasi el servidor da que el resultado fue correcto cambiando el estado de false a true en ganr
+            if (datos.resultado === 'correcto') setGano(true);
+            //limpia la caja de texto para que pueda escribirlo correctamente
+            setNumero('');
+            } catch (err) { //si el servidor esta apagado, no corre en el puerto dicho o se va el internet se da el mensaje
+            setError('No se pudo conectar con el servidor');
+            }
 };

@@ -15,4 +15,7 @@ function Juego(){
     //guarda y recuerda la lista de todos los intentos 
     const [historial, setHistorial] =  useState([]);
 
+    //mensaje de el servidor para los casos que se van dando 
+    const [mensaje, setMensaje] = useState('');
+
 };

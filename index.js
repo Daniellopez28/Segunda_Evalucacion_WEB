@@ -103,6 +103,12 @@ if(platoMenu.stock < cantidad){
 return res.status(400).json({mensaje: "Stock insuficiente"});
 }
 
+// Solo apartamos comida si alcanza el dinero disponible.
+const costo = platoMenu.precio * cantidad;
+if(costo > saldoUsuario){
+return res.status(400).json({mensaje: "Saldo insuficiente para esta cantidad"});
+}
+
 /*3. Buscamos si el plato ya está en el carrito, si ya lo lleva*/
 const item_En_Reserva = reserva_Actual.find(item => item.id === alimentoId);
 
@@ -117,6 +123,7 @@ item_En_Reserva.cantidad += cantidad;
 /*4. Le restamos el stock al menú general, pus si ya se llevaro uno
 obvio debe disminuir el stock*/
 platoMenu.stock -= cantidad;
+saldoUsuario -= costo;
 
 res.status(200).json({mensaje: "Plato agregado", reserva: reserva_Actual});
 });
@@ -137,23 +144,9 @@ return res.status(404).json({mensaje: "El plato no está en tu reserva"});
 /*2. Buscamos el plato en el menú para saber su precio*/
 const platoMenu =  menuRestaurante.find(p => p.id == idPlato);
 
-/*3.  Calculamos cuánto costaría 
-el carrito si hacemos este cambio*/
-let nuevoTotal = 0;
-for(let i = 0; i < reserva_Actual.length; i++){
-let item = reserva_Actual[i];
-let plato = menuRestaurante.find(p => p.id === item.id);
-
-/*si es el plato que estamos modificando, usamos la nueva cantidad
-el ? y : es como un pequeño if, que pregunta  si el id que estamos revisando (item.id)
-es iugal al id del plato que queremos modificar(idplato), entonces cantidad
-vale nueva cantidad, peri si no es igual vale lo que ya tenia en el carrito*/
-let cantidad = (item.id === idPlato) ? nuevaCantidad : item.cantidad;
-nuevoTotal += (plato.precio * cantidad);
-
-}
-/*4. validamos si el usuario tiene dinero suficiente (no anda de pobre)*/
-if(nuevoTotal > saldoUsuario){
+// Solo cobramos las porciones extra; al reducir, devolvemos dinero.
+const costoAdicional = platoMenu.precio * (nuevaCantidad - item_En_Reserva.cantidad);
+if(costoAdicional > saldoUsuario){
 return res.status(400).json({mensaje: "Saldo insuficiente para esta cantidad"});
 }
 
@@ -164,6 +157,7 @@ return res.status(400).json({mensaje : "Stock insuficiente"});
 
 /*6. si todo esta nitido, actualizamos el stock y la reserva*/
 platoMenu.stock = platoMenu.stock + item_En_Reserva.cantidad - nuevaCantidad;
+saldoUsuario -= costoAdicional;
 item_En_Reserva.cantidad = nuevaCantidad;
 
 //si la cantidad llega a 0, lo quitamos del carrito
@@ -192,6 +186,7 @@ return res.status(404).json({mensaje: "El plato no está en tu reserva"});
 
    /*3. Devolvemos las unidades al inventario general*/
    platoMenu.stock += itemEnReserva.cantidad;
+   saldoUsuario += platoMenu.precio * itemEnReserva.cantidad;
 
    /*4. Filtramos el carrito para eliminar ese plato por completo*/
    reserva_Actual = reserva_Actual.filter(item => item.id !== idPlato);

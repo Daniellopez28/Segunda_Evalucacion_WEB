@@ -7,16 +7,15 @@ Food DEI: catalogo de platos conectado al backend de Express.
 En la raiz del repositorio, iniciar el backend:
 
 ```sh
-npm ci
 node index.js
 ```
 
-En otra terminal, iniciar el frontend:
-
+*Desde la terminanl en el frontend:*
 ```sh
-cd frontend
-npm ci
+npm install
+npm install reactstrap boostrap 
 npm run dev
+
 ```
 
 Abrir la direccion que muestra Vite, normalmente http://localhost:5173.

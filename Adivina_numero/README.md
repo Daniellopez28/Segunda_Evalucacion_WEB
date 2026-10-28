@@ -1,4 +1,4 @@
-#Ejercicio 1
+# Ejercicio 1
 
 Se solicita la creacion de un videojuego el cual sea una adivinanza de un numero aleatorio en el reango de 
 1-100.
@@ -6,12 +6,17 @@ Se solicita la creacion de un videojuego el cual sea una adivinanza de un numero
 *Pasos a seguir para ejecutarlo"
 
 *Desde la terminal en la carpeta de backend:*
+```sh
 node index.js
+```
 
 *Desde la terminanl en el frontend:*
+```sh
 npm install
 npm install reactstrap boostrap 
 npm run dev
+
+```
 
 Tomar el siguiente url para la ejecucion de la pagina:
 "http://localhost:5173"

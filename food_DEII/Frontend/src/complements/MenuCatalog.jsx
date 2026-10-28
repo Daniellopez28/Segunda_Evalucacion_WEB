@@ -329,7 +329,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                         className="ms-3"
                         onClick={onVolverLogin}
                     >
-                        Volver a reservar
+                        Volver a intentarlo
                     </Button>
                 </Alert>
             )}
@@ -358,13 +358,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                                 <p className="mb-2" style={{ fontSize: "14px", color:'#c13310'}}>Categoria: {plato.categoria}</p>
 
                                 <img style={{width: '90%', height:'180px'}} src={plato.img} />
-                                <p className='card-text-description' for={`cantidad-${plato.id}`} style={{fontSize:'14px'}}>{plato.descripcion}</p>
-
-                                <p className="mt-3" style={{fontSize: "14px", color:'#c13310'}}>
-                                    Stock disponible: <strong>{plato.stock}</strong>
-                                </p>
-
-
+            
                                 <Label
                                     for={`cantidad-${plato.id}`}
                                     style={{ fontSize: '14px' }}

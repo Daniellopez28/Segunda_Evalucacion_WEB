@@ -266,10 +266,6 @@ function MenuCatalog({ usuarioActual }) {
                                     Stock disponible: <strong>{plato.stock}</strong>
                                 </p>
 
-                                <img
-                                    src={plato.img}
-                                    alt={plato.nombre}
-                                />
 
                                 <Label
                                     for={`cantidad-${plato.id}`}

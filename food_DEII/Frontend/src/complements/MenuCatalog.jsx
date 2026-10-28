@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Alert, Badge, Button, Input, Label } from 'reactstrap';
+import { Alert, Badge, Button, Input } from 'reactstrap';
 import BandejaReserva from './BandejaReserva.jsx';
 import '../MenuCatalog.css';
 
@@ -17,8 +17,9 @@ async function leerRespuesta(respuesta) {
     return datos;
 }
 
-// Recibe los datos del usuario que inició sesión.
-function MenuCatalog({ usuarioActual }) {
+
+
+function MenuCatalog() {
     const [menu, setMenu] = useState([]);
     const [cantidades, setCantidades] = useState({});
     const [reserva, setReserva] = useState(null);
@@ -26,6 +27,42 @@ function MenuCatalog({ usuarioActual }) {
     const [enviandoId, setEnviandoId] = useState(null);
     const [error, setError] = useState('');
     const [mensaje, setMensaje] = useState('');
+    const [mensajeVisible, setMensajeVisible] = useState(false);
+    const [errorVisible, setErrorVisible] = useState(false);
+
+    useEffect(() => {
+        if (!error) return undefined;
+
+        const temporizadorDesvanecer = setTimeout(() => {
+            setErrorVisible(false);
+        }, 2000);
+
+        const temporizadorLimpiar = setTimeout(() => {
+            setError('');
+        }, 2300);
+
+        return () => {
+            clearTimeout(temporizadorDesvanecer);
+            clearTimeout(temporizadorLimpiar);
+        };
+    }, [error]);
+
+    useEffect(() => {
+        if (!mensaje) return undefined;
+
+        const temporizadorDesvanecer = setTimeout(() => {
+            setMensajeVisible(false);
+        }, 2000);
+
+        const temporizadorLimpiar = setTimeout(() => {
+            setMensaje('');
+        }, 2200);
+
+        return () => {
+            clearTimeout(temporizadorDesvanecer);
+            clearTimeout(temporizadorLimpiar);
+        };
+    }, [mensaje]);
 
     // Evita consultar la reserva si no hay un usuario identificado.
     const idUsuario = usuarioActual?.id;
@@ -67,11 +104,10 @@ function MenuCatalog({ usuarioActual }) {
                 setReserva(cuenta);
             } catch (error) {
                 if (!controller.signal.aborted) {
-                    setError(
-                        error instanceof TypeError
-                            ? 'No se pudo conectar con el servidor. Verifica que Express esté encendido.'
-                            : error.message
-                    );
+                    setErrorVisible(true);
+                    setError(error instanceof TypeError
+                        ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
+                        : error.message);
                 }
             } finally {
                 if (!controller.signal.aborted) {
@@ -91,11 +127,14 @@ function MenuCatalog({ usuarioActual }) {
         const cantidad = Number(cantidades[plato.id] ?? 1);
 
         setError('');
+        setErrorVisible(false);
         setMensaje('');
+        setMensajeVisible(false);
 
         // Validamos que la cantidad sea un entero positivo.
         if (!Number.isSafeInteger(cantidad) || cantidad <= 0) {
-            setError('La cantidad debe ser un entero positivo.');
+            setErrorVisible(true);
+            setError('La cantidad debe ser un entero positivo');
             return;
         }
 
@@ -124,7 +163,9 @@ function MenuCatalog({ usuarioActual }) {
         }
 
         setError('');
+        setErrorVisible(false);
         setMensaje('');
+        setMensajeVisible(false);
         setEnviandoId(id);
 
         try {
@@ -143,7 +184,7 @@ function MenuCatalog({ usuarioActual }) {
             });
 
             const datos = await leerRespuesta(respuesta);
-
+            setMensajeVisible(true);
             setMensaje(datos.mensaje);
 
             // Actualizamos el menú y la reserva con los datos del servidor.
@@ -161,12 +202,10 @@ function MenuCatalog({ usuarioActual }) {
 
             return true;
         } catch (error) {
-            setError(
-                error instanceof TypeError
-                    ? 'No se pudo conectar con el servidor. Verifica que Express esté encendido.'
-                    : error.message
-            );
-
+            setErrorVisible(true);
+            setError(error instanceof TypeError
+                ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
+                : error.message);
             return false;
         } finally {
             setEnviandoId(null);
@@ -198,84 +237,33 @@ function MenuCatalog({ usuarioActual }) {
             </h1>
 
             {reserva && (
-                <Alert
-                    color="info"
-                    className="d-flex flex-wrap gap-3 justify-content-between"
-                >
-                    <span>
-                        Tu saldo actual:{' '}
-                        <strong>
-                            ${Number(reserva.saldo).toFixed(2)}
-                        </strong>
-                    </span>
-
-                    <span>
-                        Total de tu reserva:{' '}
-                        <Badge color="dark">
-                            ${Number(reserva.total).toFixed(2)}
-                        </Badge>
-                    </span>
+                <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0, zIndex:1020}}>
+                    <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
+                    <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>
                 </Alert>
             )}
-
-            {error && (
-                <Alert color="warning" role="alert">
-                    {error}
-                </Alert>
-            )}
-
-            {mensaje && (
-                <Alert color="success" role="status">
-                    {mensaje}
-                </Alert>
-            )}
-
-            {enviandoId !== null && (
-                <p role="status">Guardando cambios...</p>
-            )}
-
-            {cargando && (
-                <p role="status">Cargando menú...</p>
-            )}
-
-            {!cargando && error && (
-                <Button
-                    color="secondary"
-                    outline
-                    onClick={() => window.location.reload()}
-                >
+            {enviandoId !== null && <p role="status">Guardando cambios...</p>}
+            {cargando && <p role="status">Cargando menu...</p>}
+           {/*  {!cargando && error && (
+                <Button color="secondary" outline onClick={() => window.location.reload()}>
                     Volver a cargar
                 </Button>
-            )}
-
-            {!cargando && !error && menu.length === 0 && (
-                <p>No hay platos disponibles hoy.</p>
-            )}
+            )} */}
+            {!cargando && !error && menu.length === 0 && <p>No hay platos disponibles hoy.</p>}
 
             <div className="menuReservaLayout">
                 <div className="maincardContainer">
                     {menu.map(plato => (
-                        <article
-                            className="cardContainer"
-                            key={plato.id}
-                            aria-label={plato.nombre}
-                        >
-                            <div className="cardContainer-content">
-                                <h2
-                                    className="cardContainer-name"
-                                    style={{ textAlign: 'center' }}
-                                >
-                                    {plato.nombre}
-                                </h2>
+                        <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
+                            <div className="cardContainer-content" style={{alignItems:'center'}}>
+                                <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
+                                <p className="mb-2" style={{ fontSize: "14px", color:'#c13310'}}>Categoria: {plato.categoria}</p>
 
-                                <p
-                                    className="mb-2"
-                                    style={{
-                                        fontSize: '14px',
-                                        color: '#BF416F'
-                                    }}
-                                >
-                                    Categoría: {plato.categoria}
+                                <img style={{width: '90%', height:'180px'}} src={plato.img} />
+                                <p className='card-text-description' for={`cantidad-${plato.id}`} style={{fontSize:'14px'}}>{plato.descripcion}</p>
+
+                                <p className="mt-3" style={{fontSize: "14px", color:'#c13310'}}>
+                                    Stock disponible: <strong>{plato.stock}</strong>
                                 </p>
 
                                 <img
@@ -347,15 +335,20 @@ function MenuCatalog({ usuarioActual }) {
                         </article>
                     ))}
                 </div>
-
-                <BandejaReserva
-                    reserva={reserva}
-                    menu={menu}
-                    cargando={cargando}
-                    ocupado={enviandoId !== null}
-                    onActualizar={actualizarPorciones}
-                    onQuitar={quitarPlato}
-                />
+                <div className="reservaSidebar">
+                    <BandejaReserva
+                        reserva={reserva}
+                        menu={menu}
+                        error={error}
+                        mensaje={mensaje}
+                        mensajeVisible={mensajeVisible}
+                        errorVisible={errorVisible}
+                        cargando={cargando}
+                        ocupado={enviandoId !== null}
+                        onActualizar={actualizarPorciones}
+                        onQuitar={quitarPlato}
+                    />
+                </div>
             </div>
         </section>
     );

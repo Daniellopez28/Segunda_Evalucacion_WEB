@@ -58,7 +58,7 @@ let menuRestaurante = [
         id: 106,
         nombre: "Refresco de Horchata",
         img: 'https://tse3.mm.bing.net/th/id/OIP.NuRXlIFI5oF7ofESeqxlfwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-        descripcion: "Bebida de horchata, con un sabor dulce, cremoso y tradicional que combina deliciosos ingredientes naturales.",
+        descripcion: "Bebida de horchata, con un sabor dulce, cremoso y tradicional que combina ingredientes naturales.",
         precio: 1.75,
         stock: 4,
         categoria: "Bebida"
@@ -192,8 +192,6 @@ app.delete('/api/reserva', (req, res) => {
         });
     }
 
-    if (rechazarSiReservaConfirmada(res, usuarioEncontrado.id)) return;
-
     const reservaActual = obtenerReservaUsuario(usuarioEncontrado.id);
 
     for (const item of reservaActual) {
@@ -204,6 +202,7 @@ app.delete('/api/reserva', (req, res) => {
     }
 
     reservaActual.length = 0;
+    reservasConfirmadas.delete(usuarioEncontrado.id);
 
     res.status(200).json({
         mensaje: "El tiempo terminó. Tu reserva se vació; puedes realizarla nuevamente.",

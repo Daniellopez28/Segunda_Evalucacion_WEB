@@ -282,7 +282,6 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
     const vaciarReservaPorTiempo = useCallback(async (reintentar = false) => {
         if (
             !idUsuario ||
-            reserva?.confirmada ||
             confirmandoReserva ||
             (limpiezaEnProcesoRef.current && !reintentar)
         ) return;
@@ -321,10 +320,10 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
         } finally {
             setLimpiandoReserva(false);
         }
-    }, [confirmandoReserva, encabezadosUsuario, idUsuario, reserva?.confirmada]);
+    }, [confirmandoReserva, encabezadosUsuario, idUsuario]);
 
     useEffect(() => {
-        if (!idUsuario || reserva?.confirmada) return undefined;
+        if (!idUsuario) return undefined;
 
         if (expiracionReservaRef.current === null) {
             expiracionReservaRef.current = Date.now() + duracionReserva * 1000;
@@ -349,7 +348,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
         }, 1000);
 
         return () => clearInterval(intervalo);
-    }, [confirmandoReserva, enviandoId, idUsuario, reserva?.confirmada, vaciarReservaPorTiempo]);
+    }, [confirmandoReserva, enviandoId, idUsuario, vaciarReservaPorTiempo]);
 
     return (
         <section aria-labelledby="titulo-menu">
@@ -357,7 +356,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                 Menú del día
             </h1>
 
-            {reserva && !reserva.confirmada && (
+            {reserva && (
                 <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0, zIndex:1020}}>
                     <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
                     <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Badge, Button, Input, Label } from 'reactstrap';
+import { Alert, Badge, Button, Input } from 'reactstrap';
 import BandejaReserva from './BandejaReserva.jsx';
 import '../MenuCatalog.css';
 
@@ -14,6 +14,8 @@ async function leerRespuesta(respuesta) {
     return datos;
 }
 
+
+
 function MenuCatalog() {
     const [menu, setMenu] = useState([]);
     const [cantidades, setCantidades] = useState({});
@@ -22,6 +24,42 @@ function MenuCatalog() {
     const [enviandoId, setEnviandoId] = useState(null);
     const [error, setError] = useState('');
     const [mensaje, setMensaje] = useState('');
+    const [mensajeVisible, setMensajeVisible] = useState(false);
+    const [errorVisible, setErrorVisible] = useState(false);
+
+    useEffect(() => {
+        if (!error) return undefined;
+
+        const temporizadorDesvanecer = setTimeout(() => {
+            setErrorVisible(false);
+        }, 2000);
+
+        const temporizadorLimpiar = setTimeout(() => {
+            setError('');
+        }, 2300);
+
+        return () => {
+            clearTimeout(temporizadorDesvanecer);
+            clearTimeout(temporizadorLimpiar);
+        };
+    }, [error]);
+
+    useEffect(() => {
+        if (!mensaje) return undefined;
+
+        const temporizadorDesvanecer = setTimeout(() => {
+            setMensajeVisible(false);
+        }, 2000);
+
+        const temporizadorLimpiar = setTimeout(() => {
+            setMensaje('');
+        }, 2200);
+
+        return () => {
+            clearTimeout(temporizadorDesvanecer);
+            clearTimeout(temporizadorLimpiar);
+        };
+    }, [mensaje]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -36,6 +74,7 @@ function MenuCatalog() {
                 setReserva(cuenta);
             } catch (error) {
                 if (!controller.signal.aborted) {
+                    setErrorVisible(true);
                     setError(error instanceof TypeError
                         ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
                         : error.message);
@@ -52,10 +91,13 @@ function MenuCatalog() {
     async function agregarReserva(plato) {
         const cantidad = Number(cantidades[plato.id] ?? 1);
         setError('');
+        setErrorVisible(false);
         setMensaje('');
+        setMensajeVisible(false);
 
         // Enviamos una cantidad numerica para evitar concatenaciones.
         if (!Number.isSafeInteger(cantidad) || cantidad <= 0) {
+            setErrorVisible(true);
             setError('La cantidad debe ser un entero positivo');
             return;
         }
@@ -70,7 +112,9 @@ function MenuCatalog() {
 
     async function enviarCambio(id, ruta, metodo, body) {
         setError('');
+        setErrorVisible(false);
         setMensaje('');
+        setMensajeVisible(false);
         setEnviandoId(id);
         try {
             const respuesta = await fetch(`${API}${ruta}`, {
@@ -79,6 +123,7 @@ function MenuCatalog() {
                 body: body === undefined ? undefined : JSON.stringify(body),
             });
             const datos = await leerRespuesta(respuesta);
+            setMensajeVisible(true);
             setMensaje(datos.mensaje);
 
             // Consultamos de nuevo para mostrar las cuentas reales del servidor.
@@ -90,6 +135,7 @@ function MenuCatalog() {
             setReserva(cuenta);
             return true;
         } catch (error) {
+            setErrorVisible(true);
             setError(error instanceof TypeError
                 ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
                 : error.message);
@@ -113,15 +159,14 @@ function MenuCatalog() {
             <h1 id="titulo-menu" className="h3 mb-4">Menu del dia</h1>
 
             {reserva && (
-                <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between">
+                <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0}}>
                     <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
                     <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>
                 </Alert>
             )}
-            {error && <Alert color="warning" role="alert">{error}</Alert>}
             {enviandoId !== null && <p role="status">Guardando cambios...</p>}
             {cargando && <p role="status">Cargando menu...</p>}
-       {/*      {!cargando && error && (
+           {/*  {!cargando && error && (
                 <Button color="secondary" outline onClick={() => window.location.reload()}>
                     Volver a cargar
                 </Button>
@@ -169,14 +214,20 @@ function MenuCatalog() {
                         </article>
                     ))}
                 </div>
-                <BandejaReserva
-                    reserva={reserva}
-                    menu={menu}
-                    cargando={cargando}
-                    ocupado={enviandoId !== null}
-                    onActualizar={actualizarPorciones}
-                    onQuitar={quitarPlato}
-                />
+                <div className="reservaSidebar">
+                    <BandejaReserva
+                        reserva={reserva}
+                        menu={menu}
+                        error={error}
+                        mensaje={mensaje}
+                        mensajeVisible={mensajeVisible}
+                        errorVisible={errorVisible}
+                        cargando={cargando}
+                        ocupado={enviandoId !== null}
+                        onActualizar={actualizarPorciones}
+                        onQuitar={quitarPlato}
+                    />
+                </div>
             </div>
         </section>
     );

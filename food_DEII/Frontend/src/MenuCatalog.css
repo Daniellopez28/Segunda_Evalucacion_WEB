@@ -41,14 +41,19 @@ codigo de colores:
 }
 
 .bandejaReserva {
-    position: sticky;
-    top: 20px;
+    position: static;
     padding: 20px;
     border: 1px solid #E7AF67;
     border-radius: 8px;
     background: white;
     text-align: left;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.reservaSidebar {
+    position: sticky;
+    top: 80px;
+    align-self: start;
 }
 
 .porcionesReserva {
@@ -65,7 +70,7 @@ codigo de colores:
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .bandejaReserva {
+    .reservaSidebar {
         position: static;
         grid-row: 1;
     }
@@ -166,4 +171,13 @@ codigo de colores:
   flex-grow: 1; 
   margin-top: 15px;
   margin-bottom: auto;
+}
+
+.alerta-mensaje {
+    opacity: 0;
+    transition: opacity 300ms ease;
+}
+
+.alerta-mensaje.visible {
+    opacity: 1;
 }

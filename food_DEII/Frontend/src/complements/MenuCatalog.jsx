@@ -26,6 +26,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
     const [reserva, setReserva] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [enviandoId, setEnviandoId] = useState(null);
+    const [confirmandoReserva, setConfirmandoReserva] = useState(false);
     const [error, setError] = useState('');
     const [mensaje, setMensaje] = useState('');
     const [mensajeVisible, setMensajeVisible] = useState(false);
@@ -132,6 +133,8 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
     }, [encabezadosUsuario, idUsuario]);
 
     async function agregarReserva(plato) {
+        if (reserva?.confirmada || confirmandoReserva) return;
+
         const cantidad = Number(cantidades[plato.id] ?? 1);
 
         setError('');
@@ -165,6 +168,8 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
     }
 
     async function enviarCambio(id, ruta, metodo, body) {
+        if (reserva?.confirmada || confirmandoReserva) return false;
+
         if (!idUsuario) {
             setError('Debes iniciar sesión para modificar tu reserva.');
             return false;
@@ -238,8 +243,49 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
         );
     }
 
+    async function confirmarReserva() {
+        if (
+            !idUsuario ||
+            reserva?.confirmada ||
+            !reserva?.itemsReservados?.length ||
+            enviandoId !== null ||
+            limpiandoReserva ||
+            tiempoRestante === 0
+        ) {
+            return;
+        }
+
+        setError('');
+        setErrorVisible(false);
+        setConfirmandoReserva(true);
+
+        try {
+            const respuesta = await fetch(`${API}/reserva/confirmar`, {
+                method: 'POST',
+                headers: encabezadosUsuario
+            });
+            const datos = await leerRespuesta(respuesta);
+
+            setReserva(actual => actual
+                ? { ...actual, confirmada: datos.confirmada }
+                : actual);
+        } catch (error) {
+            setErrorVisible(true);
+            setError(error instanceof TypeError
+                ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
+                : error.message);
+        } finally {
+            setConfirmandoReserva(false);
+        }
+    }
+
     const vaciarReservaPorTiempo = useCallback(async (reintentar = false) => {
-        if (!idUsuario || (limpiezaEnProcesoRef.current && !reintentar)) return;
+        if (
+            !idUsuario ||
+            reserva?.confirmada ||
+            confirmandoReserva ||
+            (limpiezaEnProcesoRef.current && !reintentar)
+        ) return;
 
         limpiezaEnProcesoRef.current = true;
         setLimpiandoReserva(true);
@@ -275,10 +321,10 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
         } finally {
             setLimpiandoReserva(false);
         }
-    }, [encabezadosUsuario, idUsuario]);
+    }, [confirmandoReserva, encabezadosUsuario, idUsuario, reserva?.confirmada]);
 
     useEffect(() => {
-        if (!idUsuario) return undefined;
+        if (!idUsuario || reserva?.confirmada) return undefined;
 
         if (expiracionReservaRef.current === null) {
             expiracionReservaRef.current = Date.now() + duracionReserva * 1000;
@@ -294,6 +340,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
             if (
                 segundos === 0 &&
                 enviandoId === null &&
+                !confirmandoReserva &&
                 !limpiezaEnProcesoRef.current &&
                 !reservaExpiradaRef.current
             ) {
@@ -302,7 +349,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
         }, 1000);
 
         return () => clearInterval(intervalo);
-    }, [enviandoId, idUsuario, vaciarReservaPorTiempo]);
+    }, [confirmandoReserva, enviandoId, idUsuario, reserva?.confirmada, vaciarReservaPorTiempo]);
 
     return (
         <section aria-labelledby="titulo-menu">
@@ -310,7 +357,7 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                 Menú del día
             </h1>
 
-            {reserva && (
+            {reserva && !reserva.confirmada && (
                 <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0, zIndex:1020}}>
                     <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
                     <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>
@@ -318,6 +365,15 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                         Tiempo restante: {String(Math.floor(tiempoRestante / 60)).padStart(2, '0')}:
                         {String(tiempoRestante % 60).padStart(2, '0')}
                     </span>
+                </Alert>
+            )}
+
+            {reserva?.confirmada && (
+                <Alert color="success" role="status" className="d-flex flex-wrap gap-3 justify-content-between align-items-center" style={{position:'sticky', top:0, zIndex:1020}}>
+                    <span>Reserva hecha con éxito, ¿volver al inicio?</span>
+                    <Button color="success" onClick={onVolverLogin}>
+                        Volver al inicio
+                    </Button>
                 </Alert>
             )}
 
@@ -394,6 +450,8 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                                     disabled={
                                         plato.stock === 0 ||
                                         enviandoId !== null ||
+                                        confirmandoReserva ||
+                                        reserva?.confirmada ||
                                         limpiandoReserva ||
                                         tiempoRestante === 0
                                     }
@@ -412,6 +470,8 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                                     disabled={
                                         plato.stock === 0 ||
                                         enviandoId !== null ||
+                                        confirmandoReserva ||
+                                        reserva?.confirmada ||
                                         limpiandoReserva ||
                                         tiempoRestante === 0
                                     }
@@ -438,11 +498,15 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                         cargando={cargando}
                         ocupado={
                             enviandoId !== null ||
+                            confirmandoReserva ||
+                            reserva?.confirmada ||
                             limpiandoReserva ||
                             tiempoRestante === 0
                         }
                         onActualizar={actualizarPorciones}
                         onQuitar={quitarPlato}
+                        onConfirmar={confirmarReserva}
+                        confirmandoReserva={confirmandoReserva}
                     />
                 </div>
             </div>

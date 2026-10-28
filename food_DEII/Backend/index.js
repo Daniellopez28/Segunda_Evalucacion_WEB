@@ -74,10 +74,23 @@ let usuarios = [
 
 // cada usuario tendrá su propia reserva
 let reservasPorUsuario = {};
+const reservasConfirmadas = new Set();
 
 function obtenerUsuario(req) {
     const idUsuario = Number(req.headers['x-usuario-id']);
     return usuarios.find(usuario => usuario.id === idUsuario);
+}
+
+//funcion que rechazara la re
+function rechazarSiReservaConfirmada(res, idUsuario) {
+    if (!reservasConfirmadas.has(idUsuario)) {
+        return false;
+    }
+
+    res.status(409).json({
+        mensaje: "La reserva ya fue confirmada y no puede modificarse."
+    });
+    return true;
 }
 
 //obtener la reserva por usuario
@@ -87,6 +100,24 @@ function obtenerReservaUsuario(idUsuario) {
     }
 
     return reservasPorUsuario[idUsuario];
+}
+
+//reiniciamos la reserva de el usuario para que pueda empezar otra reserva
+function reiniciarReservaUsuario(idUsuario) {
+    const reservaActual = obtenerReservaUsuario(idUsuario);
+    const confirmada = reservasConfirmadas.has(idUsuario);
+
+    if (!confirmada) {
+        for (const item of reservaActual) {
+            const plato = menuRestaurante.find(p => p.id === item.id);
+            if (plato) {
+                plato.stock += item.cantidad;
+            }
+        }
+    }
+
+    reservaActual.length = 0;
+    reservasConfirmadas.delete(idUsuario);
 }
 
 // Obtener menú
@@ -120,7 +151,34 @@ app.get('/api/reserva', (req, res) => {
     res.status(200).json({
         saldo: usuarioEncontrado.saldo,
         itemsReservados: reserva_Actual,
-        total: Number(total.toFixed(2))
+        total: Number(total.toFixed(2)),
+        confirmada: reservasConfirmadas.has(usuarioEncontrado.id)
+    });
+});
+
+// Confirmar la reserva del usuario identificado
+app.post('/api/reserva/confirmar', (req, res) => {
+    const usuarioEncontrado = obtenerUsuario(req);
+
+    if (!usuarioEncontrado) {
+        return res.status(401).json({
+            mensaje: "Usuario no identificado. Envía el encabezado x-usuario-id."
+        });
+    }
+
+    const reservaActual = obtenerReservaUsuario(usuarioEncontrado.id);
+
+    if (reservaActual.length === 0) {
+        return res.status(400).json({
+            mensaje: "Agrega al menos un plato antes de confirmar la reserva."
+        });
+    }
+
+    reservasConfirmadas.add(usuarioEncontrado.id);
+
+    res.status(200).json({
+        mensaje: "Reserva confirmada con éxito.",
+        confirmada: true
     });
 });
 
@@ -133,6 +191,8 @@ app.delete('/api/reserva', (req, res) => {
             mensaje: "Usuario no identificado. Envía el encabezado x-usuario-id."
         });
     }
+
+    if (rechazarSiReservaConfirmada(res, usuarioEncontrado.id)) return;
 
     const reservaActual = obtenerReservaUsuario(usuarioEncontrado.id);
 
@@ -160,6 +220,8 @@ app.post('/api/reserva/agregar', (req, res) => {
             mensaje: "Usuario no identificado. Envía el encabezado x-usuario-id."
         });
     }
+
+    if (rechazarSiReservaConfirmada(res, usuarioEncontrado.id)) return;
 
     const reserva_Actual = obtenerReservaUsuario(usuarioEncontrado.id);
     const { alimentoId, cantidad } = req.body;
@@ -225,6 +287,8 @@ app.put('/api/reserva/actualizar-porciones/:id', (req, res) => {
             mensaje: "Usuario no identificado. Envía el encabezado x-usuario-id."
         });
     }
+
+    if (rechazarSiReservaConfirmada(res, usuarioEncontrado.id)) return;
 
     const reserva_Actual = obtenerReservaUsuario(usuarioEncontrado.id);
     const idPlato = parseInt(req.params.id, 10);
@@ -314,6 +378,8 @@ app.delete('/api/reserva/eliminar/:id', (req, res) => {
         });
     }
 
+    if (rechazarSiReservaConfirmada(res, usuarioEncontrado.id)) return;
+
     const reserva_Actual = obtenerReservaUsuario(usuarioEncontrado.id);
     const idPlato = parseInt(req.params.id, 10);
 
@@ -369,6 +435,8 @@ app.post('/api/login', (req, res) => {
             mensaje: "Usuario o contraseña incorrectos"
         });
     }
+
+    reiniciarReservaUsuario(usuarioEncontrado.id);
 
     const { password: contrasena, ...usuarioPublico } = usuarioEncontrado;
 

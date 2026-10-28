@@ -57,6 +57,7 @@ function BandejaReserva({ reserva, menu, cargando, ocupado, onActualizar, onQuit
                     </ListGroup>
                     <p style={{fontSize:'16px'}}>Saldo disponible: <strong>${(reserva.saldo-reserva.total).toFixed(2)}</strong></p>
                     {items.length > 0 && <p style={{paddingBottom:'15px'}} className="small text-muted mt-3">Para eliminar la ultima porcion, usa Quitar.</p>}
+                    
                     <p className="mb-2" style={{fontSize: '25px'}}>Total: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></p>
 
                 </>

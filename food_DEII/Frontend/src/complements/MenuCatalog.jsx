@@ -119,14 +119,13 @@ function MenuCatalog() {
                 </Alert>
             )}
             {error && <Alert color="warning" role="alert">{error}</Alert>}
-            {mensaje && <Alert color="success" role="status">{mensaje}</Alert>}
             {enviandoId !== null && <p role="status">Guardando cambios...</p>}
             {cargando && <p role="status">Cargando menu...</p>}
-            {!cargando && error && (
+       {/*      {!cargando && error && (
                 <Button color="secondary" outline onClick={() => window.location.reload()}>
                     Volver a cargar
                 </Button>
-            )}
+            )} */}
             {!cargando && !error && menu.length === 0 && <p>No hay platos disponibles hoy.</p>}
 
             <div className="menuReservaLayout">

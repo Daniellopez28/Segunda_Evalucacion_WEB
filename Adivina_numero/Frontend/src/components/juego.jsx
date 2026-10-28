@@ -1,7 +1,7 @@
 //importamos funcion de 
 import { useState } from 'react';
 //importamos componentes visuales
-import { Container, Form, Input, Button, Alert, ListGroup, ListGroupItem, Badge } from 'reactstrap';
+import { Card, CardBody, Form, InputGroup, Input, Button, Alert, ListGroup, ListGroupItem, Badge } from 'reactstrap';
 
 //creamos una constante api que almacenara la URL
 const API = 'http://localhost:4000'; 
@@ -63,7 +63,7 @@ function Juego(){
     };
 
     //pide al servidor un nuevo numero oculto y limpia todos los estados del juego
-    const reiniciar = async () => {
+    const reiniciar = async () => { //lo solicita de manera asincronica
         try {
             await fetch(`${API}/reset`, { method: 'POST' });
             setHistorial([]);
@@ -77,41 +77,57 @@ function Juego(){
     };
 
     return (
-        <Container className="mt-4" style={{ maxWidth: '500px' }}>
-            <h2>Adivina el Número (1 a 100)</h2>
+        <Card className="juego-card">
+            <CardBody className="p-4 text-center"> 
+                <h1 className="h3 fw-bold mb-1">Adivina el Número</h1>
+                <p className="text-muted mb-4">Estoy pensando en un número del 1 al 100</p>
 
-            {error && <Alert color="warning">{error}</Alert>}
-            {mensaje && <Alert color={gano ? 'success' : 'info'}>{mensaje}</Alert>}
+                {error && <Alert color="warning" className="py-2">{error}</Alert>}
+                {mensaje && <Alert color={gano ? 'success' : 'info'} className="py-2">{mensaje}</Alert>}
 
-            <Form onSubmit={enviarIntento} className="d-flex gap-2 mb-3">
-                <Input
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={numero}
-                    onChange={(e) => setNumero(e.target.value)}
-                    disabled={gano}
-                    placeholder="Tu número"
-                />
-                <Button color="primary" type="submit" disabled={gano || numero === ''}>
-                    Probar
+                <Form onSubmit={enviarIntento} className="mb-4">
+                    <InputGroup size="lg">
+                        <Input
+                            className="input-numero"
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={numero}
+                            onChange={(e) => setNumero(e.target.value)}
+                            disabled={gano}
+                            placeholder="?"
+                        />
+                        <Button color="primary" type="submit" disabled={gano || numero === ''}>
+                            Probar
+                        </Button>
+                    </InputGroup>
+                </Form>
+
+                <p className="mb-3">
+                    Intentos fallidos: <Badge color="danger" pill>{fallidos}</Badge>
+                </p>
+
+                <h2 className="h6 text-start text-muted">Historial</h2>
+                {historial.length === 0 ? (
+                    <p className="text-muted small mb-4">Todavía no has hecho ningún intento.</p>
+                ) : (
+                    <ListGroup className="historial mb-4">
+                        {historial.map((h, i) => (
+                            <ListGroupItem key={i} className="d-flex justify-content-between align-items-center">
+                                <span>Intento {i + 1}: <strong>{h.numero}</strong></span>
+                                <Badge color={h.resultado === 'correcto' ? 'success' : h.resultado === 'mayor' ? 'warning' : 'info'}>
+                                    {h.resultado}
+                                </Badge>
+                            </ListGroupItem>
+                        ))}
+                    </ListGroup>
+                )}
+
+                <Button color={gano ? 'success' : 'secondary'} outline={!gano} className="w-100" onClick={reiniciar}>
+                    {gano ? 'Jugar de nuevo' : 'Reiniciar'}
                 </Button>
-            </Form>
-
-            <p>Intentos fallidos: <Badge color="danger">{fallidos}</Badge></p>
-
-            <ListGroup className="mb-3">
-                {historial.map((h, i) => (
-                    <ListGroupItem key={i}>
-                        Intento {i + 1}: <strong>{h.numero}</strong> ({h.resultado})
-                    </ListGroupItem>
-                ))}
-            </ListGroup>
-
-            <Button color="secondary" onClick={reiniciar}>
-                {gano ? 'Jugar de nuevo' : 'Reiniciar'}
-            </Button>
-        </Container>
+            </CardBody>
+        </Card>
     );
 }
 

@@ -1,4 +1,4 @@
-import Juego from './components/juego';
+import Juego from './components/Juego';
 
 function App() {
     return <Juego />;

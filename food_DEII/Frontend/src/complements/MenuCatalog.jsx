@@ -133,14 +133,14 @@ function MenuCatalog() {
                 <div className="maincardContainer">
                     {menu.map(plato => (
                         <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
-                            <div className="cardContainer-content">
+                            <div className="cardContainer-content" style={{alignItems:'center'}}>
                                 <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
-                                <p className="mb-2" style={{ fontSize: "14px", color:'#BF416F'}}>Categoria: {plato.categoria}</p>
+                                <p className="mb-2" style={{ fontSize: "14px", color:'#c13310'}}>Categoria: {plato.categoria}</p>
 
-                                <img src={plato.img} />
-                                <Label for={`cantidad-${plato.id}`} style={{fontSize:'14px'}}>{plato.descripcion}</Label>
+                                <img style={{width: '90%', height:'180px'}} src={plato.img} />
+                                <p className='card-text-description' for={`cantidad-${plato.id}`} style={{fontSize:'14px'}}>{plato.descripcion}</p>
 
-                                <p className="my-2" style={{fontSize: "14px", color:'#BF416F'}}>
+                                <p className="mt-3" style={{fontSize: "14px", color:'#c13310'}}>
                                     Stock disponible: <strong>{plato.stock}</strong>
                                 </p>
 

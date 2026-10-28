@@ -6,7 +6,7 @@ Se solicita la creacion de un videojuego el cual sea una adivinanza de un numero
 *Pasos a seguir para ejecutarlo"
 
 *Desde la terminal en la carpeta de backend:*
-node idnex.js
+node index.js
 
 *Desde la terminanl en el frontend:*
 npm install

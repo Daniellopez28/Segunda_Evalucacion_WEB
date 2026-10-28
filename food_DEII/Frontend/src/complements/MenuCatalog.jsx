@@ -159,7 +159,7 @@ function MenuCatalog() {
             <h1 id="titulo-menu" className="h3 mb-4">Menu del dia</h1>
 
             {reserva && (
-                <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0}}>
+                <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0, zIndex:1020}}>
                     <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
                     <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>
                 </Alert>

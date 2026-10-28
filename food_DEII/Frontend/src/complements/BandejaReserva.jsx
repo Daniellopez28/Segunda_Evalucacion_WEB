@@ -40,7 +40,7 @@ function BandejaReserva({ reserva, menu, mensaje, error, errorVisible, mensajeVi
                             const nombre = plato?.nombre ?? `Plato ${item.id}`;
 
                             return (
-                                <ListGroupItem key={item.id} aria-label={`Reserva de ${nombre}`}>
+                                <ListGroupItem key={item.id} aria-label={`Reserva de ${nombre}`} style={{zIndex:1010}}>
                                     <h3 className="h6">{nombre}</h3>
                                     {plato && <p className="mb-2">Subtotal: ${(plato.precio * item.cantidad).toFixed(2)}</p>}
                                     <div className="d-flex flex-wrap gap-2 align-items-center justify-content-between">

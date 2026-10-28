@@ -60,9 +60,9 @@ function Login({ onLogin }) {
                     Ingresa a tu cuenta de Food DEI
                 </p>
 
-                <Form onSubmit={iniciarSesion}>
+                <Form onSubmit={iniciarSesion} style={{color: '#9F280A', fontWeight:'bold'}}>
                     <FormGroup>
-                        <Label for="usuario">Usuario</Label>
+                        <Label for="usuario" className='labelText'>Usuario</Label>
                         <Input
                             id="usuario"
                             type="text"
@@ -103,7 +103,7 @@ function Login({ onLogin }) {
                     </Button>
                 </Form>
 
-                <p className="small text-muted text-center mt-3 mb-0">
+                <p className="small text-muted text-center mt-3 mb-0" >
                     Food DEI S.A. de R.L.
                 </p>
             </div>

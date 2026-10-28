@@ -119,7 +119,7 @@ codigo de colores:
 }
 
 .cardContainer-content > label {
-    margin-top: auto;
+    margin-top: 15px;
 }
 
 .cardContainer-content .inputCantidad {
@@ -137,6 +137,41 @@ codigo de colores:
     width: 100%;
     font-weight: bold;
     text-align: left;
+    height: 2.7em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuCategoria {
+    width: 100%;
+    height: 2.5em;
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #c13310;
+}
+
+.menuImagen {
+    width: 90%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.cardContainer-content > .menuDescripcion {
+    display: -webkit-box;
+    width: 100%;
+    height: 4.5em;
+    margin: 15px 0 8px;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5em;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.menuStock {
+    min-height: 1.5em;
+    margin: 0 0 8px;
 }
 
 .cardContainer-price{

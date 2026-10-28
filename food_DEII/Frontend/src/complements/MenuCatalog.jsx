@@ -411,22 +411,19 @@ function MenuCatalog({ usuarioActual, onVolverLogin }) {
                         <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
                             <div className="cardContainer-content" style={{alignItems:'center'}}>
                                 <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
-                                <p className="mb-2" style={{ fontSize: "14px", color:'#c13310'}}>Categoria: {plato.categoria}</p>
+                                <p className="menuCategoria">Categoria: {plato.categoria}</p>
 
-                                <img style={{width: '90%', height:'180px'}} src={plato.img} />
+                                <img className="menuImagen" src={plato.img} alt={plato.nombre} />
             
-                                <Label
-                                    for={`cantidad-${plato.id}`}
-                                    style={{ fontSize: '14px' }}
-                                >
+                                <Label className="menuDescripcion" for={`cantidad-${plato.id}`}>
                                     {plato.descripcion}
                                 </Label>
 
                                 <p
-                                    className="my-2"
+                                    className="menuStock"
                                     style={{
                                         fontSize: '14px',
-                                        color: '#BF416F'
+                                        color: '#B43E17'
                                     }}
                                 >
                                     Stock disponible:{' '}

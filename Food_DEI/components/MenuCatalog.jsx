@@ -135,11 +135,12 @@ function MenuCatalog() {
                         <article className="cardContainer" key={plato.id} aria-label={plato.nombre}>
                             <div className="cardContainer-content">
                                 <h2 className="cardContainer-name" style={{ textAlign: "center" }}>{plato.nombre}</h2>
-                                <p className="mb-2" style={{ fontSize: "14px" }}>Categoria: {plato.categoria}</p>
+                                <p className="mb-2" style={{ fontSize: "14px", color:'#BF416F'}}>Categoria: {plato.categoria}</p>
 
-                                <Label for={`cantidad-${plato.id}`}>{plato.descripcion}</Label>
+                                <img src={plato.img} />
+                                <Label for={`cantidad-${plato.id}`} style={{fontSize:'14px'}}>{plato.descripcion}</Label>
 
-                                <p className="my-2" style={{fontSize: "14px"}}>
+                                <p className="my-2" style={{fontSize: "14px", color:'#BF416F'}}>
                                     Stock disponible: <strong>{plato.stock}</strong>
                                 </p>
 

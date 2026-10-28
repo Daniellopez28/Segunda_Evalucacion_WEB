@@ -13,11 +13,13 @@ app.use(cors());
 let saldoUsuario = 25.00;
 
 let menuRestaurante = [
-    {id: 101, nombre: "Menú ejecutivo (Pollo)", descripcion: "Pechuga de pollo en salsa de hongos con vegetales salteados" ,precio: 5.50, stock: 12, categoria: "Fuerte"},
-    {id: 102, nombre: "Pasta alfredo", descripcion: "Deliciosa pasta alfredo con cilantro", precio: 6.00, stock: 8, categoria: "Fuerte"},
-    {id: 103, nombre: "Ensalada César", descripcion: "Lechuga, tomate y pepino acompañado de salsa ranch y trocitos de pollo" ,precio: 3.50, stock: 15, categoria: "Entrada"},
-    {id: 104, nombre: "Jugo natural", descripcion: "Jugo de naranja natural",precio: 1.50, stock: 2, categoria: "Bebida"},
-    {id: 105, nombre: "Agua mineral", descripcion: "Agua carbonatada",precio: 1.00, stock: 20, categoria: "Bebida"}
+    {id: 101, nombre: "Menú ejecutivo (Pollo)", img:'https://img.freepik.com/fotos-premium/filete-pechuga-pollo-plancha-verdura_1339-43628.jpg?w=2000',descripcion: "Pechuga de pollo en salsa de hongos con vegetales salteados" ,precio: 5.50, stock: 12, categoria: "Fuerte"},
+    {id: 102, nombre: "Pasta alfredo", img:'https://ellacooks.com/wp-content/uploads/2025/02/alfredo-5.png',descripcion: "Deliciosa pasta alfredo con cilantro, trozos de pechuga de pollo y queso gratinado", precio: 6.00, stock: 8, categoria: "Fuerte"},
+    {id: 103, nombre: "Ensalada César", img:'https://imag.bonviveur.com/ensalada-cesar-casera.jpg',descripcion: "Lechuga, tomate y trozos de pan acompañado de salsa ranch y trocitos de jamon" ,precio: 3.50, stock: 15, categoria: "Entrada"},
+    {id: 104, nombre: "Jugo natural", img: 'https://cdn.glotoncubano.com/posts/post-187/content/jugo-de-naranja-y-zanahoria-fresco-en-vaso-alto-con-naranja-y-hielo-cocina-cubana-aggk.webp',descripcion: "Jugo de naranja natural",precio: 1.50, stock: 2, categoria: "Bebida"},
+    {id: 105, nombre: "Refresco de Jamaica", img: 'https://blog.oncosalud.pe/hubfs/Flor%20de%20Jamaica%20Cu%C3%A1les%20Son%20sus%20Beneficios.jpg',descripcion: "Preparada con flores naturales que le dan un sabor ligeramente acido, dulce y delicioso.",precio: 1.25, stock: 6, categoria: "Bebida"},
+    {id: 105, nombre: "Refresco de Horchata", img: 'https://tse3.mm.bing.net/th/id/OIP.NuRXlIFI5oF7ofESeqxlfwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',descripcion: "Bebida de horchata, con un sabor dulce, cremoso y tradicional que combina deliciosos ingredientes naturales.",precio: 1.75, stock: 4, categoria: "Bebida"},
+   
 
 ];
 

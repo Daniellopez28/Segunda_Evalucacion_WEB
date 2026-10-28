@@ -67,12 +67,10 @@ function ContenidoApp() {
                         path="/menu"
                         element={usuarioActual ? (
                             <>
-                                <div className="text-end mb-3">
-                                    <strong>
-                                        Tu saldo: ${Number(usuarioActual.saldo).toFixed(2)}
-                                    </strong>
-                                </div>
-                                <MenuCatalog usuarioActual={usuarioActual} />
+                                <MenuCatalog
+                                    usuarioActual={usuarioActual}
+                                    onVolverLogin={cerrarSesion}
+                                />
                             </>
                         ) : (
                             <Navigate to="/" replace />

@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Badge, Button, Input, Label } from 'reactstrap';
 import BandejaReserva from './BandejaReserva.jsx';
 import '../MenuCatalog.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const duracionReserva = 1 * 60;
 
 async function leerRespuesta(respuesta) {
     const datos = await respuesta.json();
@@ -19,7 +20,7 @@ async function leerRespuesta(respuesta) {
 
 
 
-function MenuCatalog({ usuarioActual }) {
+function MenuCatalog({ usuarioActual, onVolverLogin }) {
     const [menu, setMenu] = useState([]);
     const [cantidades, setCantidades] = useState({});
     const [reserva, setReserva] = useState(null);
@@ -29,6 +30,13 @@ function MenuCatalog({ usuarioActual }) {
     const [mensaje, setMensaje] = useState('');
     const [mensajeVisible, setMensajeVisible] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
+    const [tiempoRestante, setTiempoRestante] = useState(duracionReserva);
+    const [limpiandoReserva, setLimpiandoReserva] = useState(false);
+    const [limpiezaFallida, setLimpiezaFallida] = useState(false);
+    const [reservaExpirada, setReservaExpirada] = useState(false);
+    const expiracionReservaRef = useRef(null);
+    const limpiezaEnProcesoRef = useRef(false);
+    const reservaExpiradaRef = useRef(false);
 
     useEffect(() => {
         if (!error) return undefined;
@@ -68,9 +76,9 @@ function MenuCatalog({ usuarioActual }) {
     const idUsuario = usuarioActual?.id;
 
     // Encabezados para identificar al usuario en el backend.
-    const encabezadosUsuario = {
+    const encabezadosUsuario = useMemo(() => ({
         'x-usuario-id': String(idUsuario)
-    };
+    }), [idUsuario]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -121,7 +129,7 @@ function MenuCatalog({ usuarioActual }) {
         return () => controller.abort();
 
         // Volvemos a consultar si cambia el usuario.
-    }, [idUsuario]);
+    }, [encabezadosUsuario, idUsuario]);
 
     async function agregarReserva(plato) {
         const cantidad = Number(cantidades[plato.id] ?? 1);
@@ -230,6 +238,72 @@ function MenuCatalog({ usuarioActual }) {
         );
     }
 
+    const vaciarReservaPorTiempo = useCallback(async (reintentar = false) => {
+        if (!idUsuario || (limpiezaEnProcesoRef.current && !reintentar)) return;
+
+        limpiezaEnProcesoRef.current = true;
+        setLimpiandoReserva(true);
+        setLimpiezaFallida(false);
+        setError('');
+        setErrorVisible(false);
+
+        try {
+            const respuesta = await fetch(`${API}/reserva`, {
+                method: 'DELETE',
+                headers: encabezadosUsuario
+            });
+            await leerRespuesta(respuesta);
+            const [platos, cuenta] = await Promise.all([
+                fetch(`${API}/menu`).then(leerRespuesta),
+                fetch(`${API}/reserva`, {
+                    headers: encabezadosUsuario
+                }).then(leerRespuesta)
+            ]);
+
+            setMenu(platos);
+            setReserva(cuenta);
+            setMensaje('');
+            setReservaExpirada(true);
+            reservaExpiradaRef.current = true;
+            limpiezaEnProcesoRef.current = false;
+        } catch (error) {
+            setErrorVisible(true);
+            setError(error instanceof TypeError
+                ? 'No se pudo conectar con el servidor. Verifica que Express este encendido.'
+                : error.message);
+            setLimpiezaFallida(true);
+        } finally {
+            setLimpiandoReserva(false);
+        }
+    }, [encabezadosUsuario, idUsuario]);
+
+    useEffect(() => {
+        if (!idUsuario) return undefined;
+
+        if (expiracionReservaRef.current === null) {
+            expiracionReservaRef.current = Date.now() + duracionReserva * 1000;
+        }
+
+        const intervalo = setInterval(() => {
+            const segundos = Math.max(
+                0,
+                Math.ceil((expiracionReservaRef.current - Date.now()) / 1000)
+            );
+            setTiempoRestante(segundos);
+
+            if (
+                segundos === 0 &&
+                enviandoId === null &&
+                !limpiezaEnProcesoRef.current &&
+                !reservaExpiradaRef.current
+            ) {
+                void vaciarReservaPorTiempo();
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalo);
+    }, [enviandoId, idUsuario, vaciarReservaPorTiempo]);
+
     return (
         <section aria-labelledby="titulo-menu">
             <h1 id="titulo-menu" className="h3 mb-4">
@@ -240,9 +314,33 @@ function MenuCatalog({ usuarioActual }) {
                 <Alert color="info" className="d-flex flex-wrap gap-3 justify-content-between" style={{position:'sticky', top:0, zIndex:1020}}>
                     <span>Tu saldo actual: <strong>${reserva.saldo.toFixed(2)}</strong></span>
                     <span>Total de tu reserva: <Badge color="dark">${reserva.total.toFixed(2)}</Badge></span>
+                    <span role="timer" aria-live="polite">
+                        Tiempo restante: {String(Math.floor(tiempoRestante / 60)).padStart(2, '0')}:
+                        {String(tiempoRestante % 60).padStart(2, '0')}
+                    </span>
+                </Alert>
+            )}
+
+            {reservaExpirada && (
+                <Alert color="warning" role="alert" style={{position:'sticky', top:0, zIndex:1020}}>
+                    El tiempo para reservar terminó y el carrito se vació. ¿Quieres intentarlo nuevamente?
+                    <Button
+                        color="warning"
+                        className="ms-3"
+                        onClick={onVolverLogin}
+                    >
+                        Volver a reservar
+                    </Button>
                 </Alert>
             )}
             {enviandoId !== null && <p role="status">Guardando cambios...</p>}
+            {limpiandoReserva && <p role="status">El tiempo terminó; vaciando la reserva...</p>}
+            {limpiezaFallida && (
+                <Button color="warning" outline onClick={() => vaciarReservaPorTiempo(true)}>
+                    Reintentar vaciar la reserva
+                </Button>
+            )}
+
             {cargando && <p role="status">Cargando menu...</p>}
            {/*  {!cargando && error && (
                 <Button color="secondary" outline onClick={() => window.location.reload()}>
@@ -301,7 +399,9 @@ function MenuCatalog({ usuarioActual }) {
                                     value={cantidades[plato.id] ?? 1}
                                     disabled={
                                         plato.stock === 0 ||
-                                        enviandoId !== null
+                                        enviandoId !== null ||
+                                        limpiandoReserva ||
+                                        tiempoRestante === 0
                                     }
                                     onChange={event =>
                                         setCantidades(anteriores => ({
@@ -317,7 +417,9 @@ function MenuCatalog({ usuarioActual }) {
                                     }`}
                                     disabled={
                                         plato.stock === 0 ||
-                                        enviandoId !== null
+                                        enviandoId !== null ||
+                                        limpiandoReserva ||
+                                        tiempoRestante === 0
                                     }
                                     onClick={() => agregarReserva(plato)}
                                 >
@@ -340,7 +442,11 @@ function MenuCatalog({ usuarioActual }) {
                         mensajeVisible={mensajeVisible}
                         errorVisible={errorVisible}
                         cargando={cargando}
-                        ocupado={enviandoId !== null}
+                        ocupado={
+                            enviandoId !== null ||
+                            limpiandoReserva ||
+                            tiempoRestante === 0
+                        }
                         onActualizar={actualizarPorciones}
                         onQuitar={quitarPlato}
                     />

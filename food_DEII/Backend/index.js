@@ -124,6 +124,33 @@ app.get('/api/reserva', (req, res) => {
     });
 });
 
+// Vaciar la reserva y devolver sus porciones al inventario.
+app.delete('/api/reserva', (req, res) => {
+    const usuarioEncontrado = obtenerUsuario(req);
+
+    if (!usuarioEncontrado) {
+        return res.status(401).json({
+            mensaje: "Usuario no identificado. Envía el encabezado x-usuario-id."
+        });
+    }
+
+    const reservaActual = obtenerReservaUsuario(usuarioEncontrado.id);
+
+    for (const item of reservaActual) {
+        const plato = menuRestaurante.find(p => p.id === item.id);
+        if (plato) {
+            plato.stock += item.cantidad;
+        }
+    }
+
+    reservaActual.length = 0;
+
+    res.status(200).json({
+        mensaje: "El tiempo terminó. Tu reserva se vació; puedes realizarla nuevamente.",
+        reserva: reservaActual
+    });
+});
+
 // Agregar un plato a la reserva
 app.post('/api/reserva/agregar', (req, res) => {
     const usuarioEncontrado = obtenerUsuario(req);

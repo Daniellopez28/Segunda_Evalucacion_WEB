@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Alert, Badge, Button, Input } from 'reactstrap';
+import { Alert, Badge, Button, Input, Label } from 'reactstrap';
 import BandejaReserva from './BandejaReserva.jsx';
 import '../MenuCatalog.css';
 
@@ -19,7 +19,7 @@ async function leerRespuesta(respuesta) {
 
 
 
-function MenuCatalog() {
+function MenuCatalog({ usuarioActual }) {
     const [menu, setMenu] = useState([]);
     const [cantidades, setCantidades] = useState({});
     const [reserva, setReserva] = useState(null);

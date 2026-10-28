@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Alert, Button, Form, FormGroup, Input, Label } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -9,6 +10,7 @@ function Login({ onLogin }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(false);
+    const navigate = useNavigate();
 
     async function iniciarSesion(event) {
         event.preventDefault();
@@ -31,6 +33,8 @@ function Login({ onLogin }) {
             }
 
             onLogin(datos.usuario);
+            navigate('/menu', { replace: true });
+
         } catch (error) {
             setError(
                 error instanceof TypeError

@@ -1,15 +1,25 @@
-
 import { useState } from 'react';
 import { Container, Navbar, NavbarBrand, Button } from 'reactstrap';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import MenuCatalog from './complements/MenuCatalog.jsx';
 import Login from './complements/login.jsx';
 
 export default function App() {
+    return (
+        <BrowserRouter>
+            <ContenidoApp />
+        </BrowserRouter>
+    );
+}
+
+function ContenidoApp() {
     const [usuarioActual, setUsuarioActual] = useState(null);
+    const navigate = useNavigate();
 
     function cerrarSesion() {
         setUsuarioActual(null);
+        navigate('/');
     }
 
     return (
@@ -30,7 +40,6 @@ export default function App() {
                         <span style={{ color: '#F6E4C9' }}>
                             Hola, {usuarioActual.nombre}
                         </span>
-
                         <Button
                             size="sm"
                             onClick={cerrarSesion}
@@ -47,20 +56,33 @@ export default function App() {
             </Navbar>
 
             <Container fluid>
-                {usuarioActual ? (
-                    <>
-                        <div className="text-end mb-3">
-                            <strong>
-                                Tu saldo: ${Number(usuarioActual.saldo).toFixed(2)}
-                            </strong>
-                        </div>
-
-                        {/* CAMBIO: pasamos el usuario conectado a MenuCatalog */}
-                        <MenuCatalog usuarioActual={usuarioActual} />
-                    </>
-                ) : (
-                    <Login onLogin={setUsuarioActual} />
-                )}
+                <Routes>
+                    <Route
+                        path="/"
+                        element={usuarioActual
+                            ? <Navigate to="/menu" replace />
+                            : <Login onLogin={setUsuarioActual} />}
+                    />
+                    <Route
+                        path="/menu"
+                        element={usuarioActual ? (
+                            <>
+                                <div className="text-end mb-3">
+                                    <strong>
+                                        Tu saldo: ${Number(usuarioActual.saldo).toFixed(2)}
+                                    </strong>
+                                </div>
+                                <MenuCatalog usuarioActual={usuarioActual} />
+                            </>
+                        ) : (
+                            <Navigate to="/" replace />
+                        )}
+                    />
+                    <Route
+                        path="*"
+                        element={<Navigate to={usuarioActual ? '/menu' : '/'} replace />}
+                    />
+                </Routes>
             </Container>
         </div>
     );
